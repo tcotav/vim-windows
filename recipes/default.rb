@@ -25,11 +25,6 @@
 #
 
 
-#  http://sourceforge.net/projects/cream/files/Vim/7.3.829/gvim-7-3-829.exe/download
-
-
-###########################################################
-# drupal install
 sourcepath=::File.join(Chef::Config[:file_cache_path], "gvim")
 gvimexe=::File.join(sourcepath,"gvim-latest.exe")
 mpath="c:/Program Files (x86)/Vim"
