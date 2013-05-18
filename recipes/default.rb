@@ -24,7 +24,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-
 sourcepath=::File.join(Chef::Config[:file_cache_path], "gvim")
 gvimexe=::File.join(sourcepath,"gvim-latest.exe")
 mpath="c:/Program Files (x86)/Vim"
@@ -41,11 +40,41 @@ remote_file gvimexe do
   checksum node['vim']['windows']['source']['checksum']
 end
 
-windows_batch "gvimexe-run" do
+powershell "gvimexe-run" do
   code <<-EOH
     #{gvimexe.gsub('/', '\\')} /S
   EOH
-  not_if do
-    ::File.exists?(mpath)
-  end
+  not_if {::File.exists?(mpath)}
 end
+
+
+
+
+##############################
+# add shortcuts
+
+vim_exe='C:\\Program Files (x86)\\vim\\vim73\\gvim.exe'
+# add one to desktop
+vim_desktop_lnk= '%HOMEDRIVE%%HOMEPATH%\\Desktop\\vim.lnk'
+# and one pinned to taskbar
+vim_taskbar_lnk = '%HOMEDRIVE%%HOMEPATH%\\AppData\\Roaming\\Microsoft\\Internet Explorer\\Quick Launch\\User Pinned'
+windows_batch "create_shortcuts" do
+  code <<-EOH
+    @echo off
+    echo Set oWS = WScript.CreateObject("WScript.Shell") > CreateShortcut.vbs
+    REM add to desktop
+    echo sLinkFile = #{vim_desktop_lnk} >> CreateShortcut.vbs
+    echo Set oLink = oWS.CreateShortcut(sLinkFile) >> CreateShortcut.vbs
+    echo oLink.TargetPath = #{vim_exe} >> CreateShortcut.vbs
+    echo oLink.Save >> CreateShortcut.vbs
+    REM add to taskbar
+    echo sLinkFile = #{vim_taskbar_lnk} >> CreateShortcut.vbs
+    echo Set oLink = oWS.CreateShortcut(sLinkFile) >> CreateShortcut.vbs
+    echo oLink.TargetPath = #{vim_exe} >> CreateShortcut.vbs
+    echo oLink.Save >> CreateShortcut.vbs
+    cscript CreateShortcut.vbs
+    del CreateShortcut.vbs
+  EOH
+  not_if {::File.exists?(vim_desktop_lnk.gsub('\\', '/'))}
+end
+
