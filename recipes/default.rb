@@ -25,7 +25,7 @@
 #
 
 sourcepath=::File.join(Chef::Config[:file_cache_path], "gvim")
-gvimexe=::File.join(sourcepath,"gvim-latest.exe")
+gvimexe=::File.join(sourcepath,"cream-latest.exe")
 mpath="c:/Program Files (x86)/Vim"
 
 # source directory where we land and unroll our zip
@@ -33,13 +33,34 @@ directory sourcepath do
   action :create
 end
 
-
-# distfile
 remote_file gvimexe do
-  source node['vim']['windows']['source']['url']
-  checksum node['vim']['windows']['source']['checksum']
+  source node['cream']['windows']['source']['url']
+  checksum node['cream']['windows']['source']['checksum']
 end
 
+#####################################
+# REGEDIT
+#
+# ref:http://sourceforge.net/apps/trac/unattended/wiki/Gvim
+template "#{sourcepath}\\gvim.reg" do
+  source 'gvim_reg.erb'
+  action :create
+  variables ({
+    :basedir => node['vim']['install']['basedir'],
+    :versiondir => node['vim']['install']['versiondir']
+  }
+  )
+end
+
+# there is windows_registry in windows cookbook, but I thought this was clearer (to win folks)
+powershell "regedit-run" do
+  code <<-EOH
+    regedit /S "#{sourcepath}\\gvim.reg"
+  EOH
+  not_if {::Registry.key_exists?('HKEY_CLASSES_ROOT\CLSID\{51EEE242-AD87-11d3-9C1E-0090278BBD99}')}
+end
+
+# run cream installer
 powershell "gvimexe-run" do
   code <<-EOH
     #{gvimexe.gsub('/', '\\')} /S
@@ -47,34 +68,33 @@ powershell "gvimexe-run" do
   not_if {::File.exists?(mpath)}
 end
 
-
-
-
 ##############################
 # add shortcuts
+#vim_exe='C:\\Program Files (x86)\\vim\\vim73\\gvim.exe'
+## add one to desktop
+#vim_desktop_lnk= '%HOMEDRIVE%%HOMEPATH%\\Desktop\\vim.lnk'
+## and one pinned to taskbar
+#vim_taskbar_lnk = '%HOMEDRIVE%%HOMEPATH%\\AppData\\Roaming\\Microsoft\\Internet Explorer\\Quick Launch\\User Pinned'
+#windows_batch "create_shortcuts" do
+#  code <<-EOH
+#    @echo off
+#    echo Set oWS = WScript.CreateObject("WScript.Shell") > CreateShortcut.vbs
+#    REM add to desktop
+#    echo sLinkFile = #{vim_desktop_lnk} >> CreateShortcut.vbs
+#    echo Set oLink = oWS.CreateShortcut(sLinkFile) >> CreateShortcut.vbs
+#    echo oLink.TargetPath = #{vim_exe} >> CreateShortcut.vbs
+#    echo oLink.Save >> CreateShortcut1.vbs
+#    REM add to taskbar
+#    echo sLinkFile = #{vim_taskbar_lnk} >> CreateShortcut.vbs
+#    echo Set oLink = oWS.CreateShortcut(sLinkFile) >> CreateShortcut.vbs
+#    echo oLink.TargetPath = #{vim_exe} >> CreateShortcut.vbs
+#    echo oLink.Save >> CreateShortcut2.vbs
+#    cscript CreateShortcut1.vbs
+#    cscript CreateShortcut2.vbs
+#    del CreateShortcut1.vbs
+#    del CreateShortcut2.vbs
+#  EOH
+#  not_if {::File.exists?(vim_desktop_lnk.gsub('\\', '/'))}
+#end
 
-vim_exe='C:\\Program Files (x86)\\vim\\vim73\\gvim.exe'
-# add one to desktop
-vim_desktop_lnk= '%HOMEDRIVE%%HOMEPATH%\\Desktop\\vim.lnk'
-# and one pinned to taskbar
-vim_taskbar_lnk = '%HOMEDRIVE%%HOMEPATH%\\AppData\\Roaming\\Microsoft\\Internet Explorer\\Quick Launch\\User Pinned'
-windows_batch "create_shortcuts" do
-  code <<-EOH
-    @echo off
-    echo Set oWS = WScript.CreateObject("WScript.Shell") > CreateShortcut.vbs
-    REM add to desktop
-    echo sLinkFile = #{vim_desktop_lnk} >> CreateShortcut.vbs
-    echo Set oLink = oWS.CreateShortcut(sLinkFile) >> CreateShortcut.vbs
-    echo oLink.TargetPath = #{vim_exe} >> CreateShortcut.vbs
-    echo oLink.Save >> CreateShortcut.vbs
-    REM add to taskbar
-    echo sLinkFile = #{vim_taskbar_lnk} >> CreateShortcut.vbs
-    echo Set oLink = oWS.CreateShortcut(sLinkFile) >> CreateShortcut.vbs
-    echo oLink.TargetPath = #{vim_exe} >> CreateShortcut.vbs
-    echo oLink.Save >> CreateShortcut.vbs
-    cscript CreateShortcut.vbs
-    del CreateShortcut.vbs
-  EOH
-  not_if {::File.exists?(vim_desktop_lnk.gsub('\\', '/'))}
-end
 
