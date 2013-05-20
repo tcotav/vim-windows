@@ -1,13 +1,17 @@
 vim-windows Cookbook
 ====================
-Rudimentary vim cookbook for windows
+Vim cookbook for Windows.  Useful for dev.
+
+Uses Cream sub project of vim: http://cream.sourceforge.net/
 
 reference: http://sourceforge.net/apps/trac/unattended/wiki/Gvim
 
 Requirements
 ------------
 #### packages
-- `windows` - vim-windows needs windows 
+- `chef_handler`
+- `windows`
+- `powershell`
 
 Attributes
 ----------
@@ -28,19 +32,34 @@ Attributes
     <td>String</td>
     <td>checksum of .exe file</td>
   </tr>
+  <tr>
+    <td><tt>['vim']['install']['basedir']</tt></td>
+    <td>String</td>
+    <td>base install dir for vim -- usually 'c:\\Program Files\\Vim' or
+'c:\\Program Files (x86)\\Vim'.  used in registry file.</td>
+  </tr>
+  <tr>
+    <td><tt>['vim']['install']['versiondir'] = 'vim73' </tt></td>
+    <td>String</td>
+    <td>version subdir of ['basedir'] above -- ex. 'vim73'.  used in
+registry file.</td>
+  </tr>
 
 </table>
 
 Usage
 -----
 #### vim-windows::default
-Just include `vim-windows` in your node's `run_list`:
+Just include `vim-windows` in your node's `run_list` along with the
+following:
 
 ```json
 {
   "name":"my_node",
   "run_list": [
+    "recipe[chef-handler]"
     "recipe[windows]"
+    "recipe[powershell]"
     "recipe[vim-windows]"
   ]
 }
