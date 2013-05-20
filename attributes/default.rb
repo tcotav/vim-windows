@@ -5,5 +5,5 @@ default['cream']['windows']['source']['url']='http://sourceforge.net/projects/cr
 default['cream']['windows']['source']['checksum']='c35921eb83b19984353419fcd29f8d2b8223737f39e120cf651ee845f5f6bf84'
 
 
-default['vim']['install']['basedir'] = 'c:\\Program Files (x86)\\Vim'
+default['vim']['install']['basedir'] = 'c:\\Program Files \(x86\)\\Vim'
 default['vim']['install']['versiondir'] = 'vim73'

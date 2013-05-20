@@ -77,7 +77,7 @@ windows_batch "create_shortcuts" do
   code <<-EOH
     @echo off
     echo Set oWS = WScript.CreateObject("WScript.Shell") > CreateShortcut.vbs
-    REM add to desktop
+    REM add to taskbar
     echo sLinkFile = #{vim_taskbar_lnk} >> CreateShortcut.vbs
     echo Set oLink = oWS.CreateShortcut(sLinkFile) >> CreateShortcut.vbs
     echo oLink.TargetPath = #{vim_exe} >> CreateShortcut.vbs
@@ -88,21 +88,4 @@ windows_batch "create_shortcuts" do
   not_if {::File.exists?(vim_taskbar_lnk.gsub('\\', '/'))}
 end
 
-
-# add one to desktop
-vim_desktop_lnk= '%HOMEDRIVE%%HOMEPATH%\\Desktop\\vim.lnk'
-windows_batch "create_desktop_shortcut" do
-  code <<-EOH
-    @echo off
-    echo Set oWS = WScript.CreateObject("WScript.Shell") > CreateShortcut.vbs
-    REM add to desktop
-    echo sLinkFile = #{vim_desktop_lnk} >> CreateShortcut.vbs
-    echo Set oLink = oWS.CreateShortcut(sLinkFile) >> CreateShortcut.vbs
-    echo oLink.TargetPath = #{vim_exe} >> CreateShortcut.vbs
-    echo oLink.Save >> CreateShortcut.vbs
-    cscript CreateShortcut.vbs
-    del CreateShortcut.vbs
-  EOH
-  not_if {::File.exists?(vim_desktop_lnk.gsub('\\', '/'))}
-end
 
