@@ -25,7 +25,7 @@
 #
 
 sourcepath=::File.join(Chef::Config[:file_cache_path], "gvim")
-gvimexe=::File.join(sourcepath,"cream-latest.exe")
+gvimexe=::File.join(sourcepath,"gvim-latest.exe")
 mpath="c:/Program Files (x86)/Vim"
 
 # source directory where we land and unroll our zip
@@ -34,8 +34,8 @@ directory sourcepath do
 end
 
 remote_file gvimexe do
-  source node['cream']['windows']['source']['url']
-  checksum node['cream']['windows']['source']['checksum']
+  source node['vim']['windows']['source']['url']
+  checksum node['vim']['windows']['source']['checksum']
 end
 
 #####################################
@@ -61,6 +61,7 @@ powershell "regedit-run" do
 end
 
 # run cream installer
+# -silent -register
 powershell "gvimexe-run" do
   code <<-EOH
     #{gvimexe.gsub('/', '\\')} /S
@@ -87,5 +88,7 @@ windows_batch "create_shortcuts" do
   EOH
   not_if {::File.exists?(vim_taskbar_lnk.gsub('\\', '/'))}
 end
+
+
 
 
