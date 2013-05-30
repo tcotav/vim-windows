@@ -2,7 +2,7 @@ vim-windows Cookbook
 ====================
 Vim cookbook for Windows (how else are you going to edit your files?)
 
-Uses Cream sub project of vim: http://cream.sourceforge.net/ for vim binary.
+Uses Cream sub project of vim: http://cream.sourceforge.net/ for vim binary.  NOTE: this installer doesn't allow you to pass in an install path, so you're going to be dumped into c:\program files (x86)\.  Thus the hardcoding of paths into the bat files and template (which could at this point be moved to File)... I should at least rewrite to be able to set a version number attribute as that'll be all that changes on version bump.
 
 Includes:
 - batch files allowing vim or gvim invocation from command line
@@ -17,7 +17,7 @@ Requirements
 - `windows`
 - `powershell`
 
-Attributes
+Attributes -- NOT USED (yet)
 ----------
 #### vim-windows::default
 <table>
