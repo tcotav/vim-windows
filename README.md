@@ -1,10 +1,14 @@
 vim-windows Cookbook
 ====================
-Vim cookbook for Windows.  Useful for dev.
+Vim cookbook for Windows (how else are you going to edit your files?)
 
-Uses Cream sub project of vim: http://cream.sourceforge.net/
+Uses Cream sub project of vim: http://cream.sourceforge.net/ for vim binary.
 
-reference: http://sourceforge.net/apps/trac/unattended/wiki/Gvim
+Includes:
+- batch files allowing vim or gvim invocation from command line
+- 'Edit with Vim' right click menu option
+
+
 
 Requirements
 ------------
