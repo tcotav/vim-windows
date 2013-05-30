@@ -60,6 +60,7 @@ powershell "regedit-run" do
   #not_if {::Registry.key_exists?('\HKEY_CLASSES_ROOT\CLSID\{51EEE242-AD87-11d3-9C1E-0090278BBD99}')}
 end
 
+
 # run cream installer
 # -silent -register
 powershell "gvimexe-run" do
@@ -69,26 +70,15 @@ powershell "gvimexe-run" do
   not_if {::File.exists?(mpath)}
 end
 
-##############################
-# add shortcuts -- TODO -- create 'create shortcut' resource
-vim_exe="#{node['vim']['install']['basedir']}\\#{node['vim']['install']['versiondir']}\\gvim.exe"
-# and one pinned to taskbar
-vim_taskbar_lnk = '%HOMEDRIVE%%HOMEPATH%\\AppData\\Roaming\\Microsoft\\Internet Explorer\\Quick Launch\\User Pinned'
-windows_batch "create_shortcuts" do
-  code <<-EOH
-    @echo off
-    echo Set oWS = WScript.CreateObject("WScript.Shell") > CreateShortcut.vbs
-    REM add to taskbar
-    echo sLinkFile = #{vim_taskbar_lnk} >> CreateShortcut.vbs
-    echo Set oLink = oWS.CreateShortcut(sLinkFile) >> CreateShortcut.vbs
-    echo oLink.TargetPath = #{vim_exe} >> CreateShortcut.vbs
-    echo oLink.Save >> CreateShortcut.vbs
-    cscript CreateShortcut.vbs
-    del CreateShortcut.vbs
-  EOH
-  not_if {::File.exists?(vim_taskbar_lnk.gsub('\\', '/'))}
+# the batch files so you can run vim from command line
+cookbook_file "c:/Windows/gvim.bat" do
+  source "gvim.bat"
 end
 
+cookbook_file "c:/Windows/vim.bat" do
+  source "vim.bat"
+end
 
-
-
+cookbook_file "c:/Windows/vimdiff.bat" do
+  source "vimdiff.bat"
+end
