@@ -82,3 +82,7 @@ end
 cookbook_file "c:/Windows/vimdiff.bat" do
   source "vimdiff.bat"
 end
+
+cookbook_file "#{ENV['HOME']}/_vimrc" do
+  source "_vimrc"
+end

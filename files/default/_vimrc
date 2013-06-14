@@ -1,0 +1,19 @@
+set foldmethod=indent
+set nocompatible
+set bs=2
+set ai
+set backup
+set noerrorbells
+set autoindent
+set autowrite
+set ruler
+set showmode
+set number
+
+set history=50        " keep 50 lines of command line history
+set tabstop=2
+set expandtab
+set shiftwidth=2
+set showmatch
+set vb
+syntax on
